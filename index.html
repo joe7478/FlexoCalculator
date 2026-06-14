@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1720" />
+<title>Flexo Calculator</title>
+<!-- iPhone home-screen support (works if opened from a server; harmless as a local file) -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Flexo Calc" />
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADE0lEQVR42u3STU7TURTG4f8OVBApVIGW70IdOXeDrsUluQITl6CTJvcmXhmQ85ZanuQ3fgfnPNOb4wtp2OQEgkNwCA7BITi0qzgW0jA49ASO2UIaNr2dLaRhcAgOwSE4BIfgEByCQ3DoNeBYSsPgEByCQ3BoOzhOltIwOASH4BAc2gqOdydLaRgcegrHpTQMDsEhOASH4BAcgkNwaH9wnF5Kw+AQHIJDtTiupGFwCA7BITi0FRwHp1fSMDgEh+DQf4Bj+v6rtn785/Sttn7894/j2vrxhy9fa4MDDjjg2Dkc86tE9Ti68Xoc3Xg9jm68HkfmfZsnHsyvEwVwtPEAjjYewNHGAziuc8EBBxxwwAEHHHDAAQcccMABBxxwwAEHHHDAAQccfz/xcH6dqBxHP16Oox8vx9GPl+MIvW/zxMP5TaIAjjYewNHGAzjaeADHTS444IADjufg+HiTqB5HN16Poxuvx9GN1+PIvG/zRDjggAMOOOCAAw444IADDjjggAMOOOB4BThuEwVwtPEAjjYewNHGAzhuc8EBBxxwwAEHHHDAAcfL4nj/6TZROY5+vBxHP16Oox8vxxF63+aJcMABBxxwwAEHHHDA8cI47hIFcLTxAI42HsDRxgM47nLBAQcccMABBxxwwAEHHHDAAQcccMABxyvAcXaXqB5HN16Poxuvx9GN1+PIvG/zRDjggAOO5+C4TxTA0cYDONp4AEcbD+C4zzUdnd0nKsfRj5fj6MfLcfTj5ThC79s8EQ444IADDjjggAMOOOCAAw444IADDjjggAMOOOAY4FglCuBo4wEcbTyAo40HcKxyTUfnq0T1OLrxehzdeD2ObrweR+Z9myfCAQcccOwMDu1BcAgOwaFKHB/OV9IwOASH4BAc2hKOB2kYHIJDcKgUx8WDNAwOwSE4BIfgEByCQ3Boj3A8SsPg0L9xHF88SsPgEByCQ3BoOzgWj9IwOASH4BAc2hKOtTQMDsEhOASH4BAcgkNwCA7tP47ZYi0Nm2bLtTQMDj2F47M0DA7BITgEh+AQHNrN/gCfs6DeBP+CfgAAAABJRU5ErkJggg==" />
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADE0lEQVR42u3STU7TURTG4f8OVBApVIGW70IdOXeDrsUluQITl6CTJvcmXhmQ85ZanuQ3fgfnPNOb4wtp2OQEgkNwCA7BITi0qzgW0jA49ASO2UIaNr2dLaRhcAgOwSE4BIfgEByCQ3DoNeBYSsPgEByCQ3BoOzhOltIwOASH4BAc2gqOdydLaRgcegrHpTQMDsEhOASH4BAcgkNwaH9wnF5Kw+AQHIJDtTiupGFwCA7BITi0FRwHp1fSMDgEh+DQf4Bj+v6rtn785/Sttn7894/j2vrxhy9fa4MDDjjg2Dkc86tE9Ti68Xoc3Xg9jm68HkfmfZsnHsyvEwVwtPEAjjYewNHGAziuc8EBBxxwwAEHHHDAAQcccMABBxxwwAEHHHDAAQccfz/xcH6dqBxHP16Oox8vx9GPl+MIvW/zxMP5TaIAjjYewNHGAzjaeADHTS444IADjufg+HiTqB5HN16Poxuvx9GN1+PIvG/zRDjggAMOOOCAAw444IADDjjggAMOOOB4BThuEwVwtPEAjjYewNHGAzhuc8EBBxxwwAEHHHDAAcfL4nj/6TZROY5+vBxHP16Oox8vxxF63+aJcMABBxxwwAEHHHDA8cI47hIFcLTxAI42HsDRxgM47nLBAQcccMABBxxwwAEHHHDAAQcccMABxyvAcXaXqB5HN16Poxuvx9GN1+PIvG/zRDjggAOO5+C4TxTA0cYDONp4AEcbD+C4zzUdnd0nKsfRj5fj6MfLcfTj5ThC79s8EQ444IADDjjggAMOOOCAAw444IADDjjggAMOOOAY4FglCuBo4wEcbTyAo40HcKxyTUfnq0T1OLrxehzdeD2ObrweR+Z9myfCAQcccOwMDu1BcAgOwaFKHB/OV9IwOASH4BAc2hKOB2kYHIJDcKgUx8WDNAwOwSE4BIfgEByCQ3Boj3A8SsPg0L9xHF88SsPgEByCQ3BoOzgWj9IwOASH4BAc2hKOtTQMDsEhOASH4BAcgkNwCA7tP47ZYi0Nm2bLtTQMDj2F47M0DA7BITgEh+AQHNrN/gCfs6DeBP+CfgAAAABJRU5ErkJggg==" />
+<style>
+  :root{
+    --bg:#0f1720; --bg2:#16212e; --card:#1b2735; --card2:#22303f;
+    --line:#2c3b4d; --text:#eef3f8; --muted:#9fb0c2; --accent:#00aeef;
+    --accent2:#ec008c; --good:#39d98a; --warn:#ffd166; --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px;line-height:1.4}
+  body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  .app-header{position:sticky;top:0;z-index:10;
+    background:linear-gradient(180deg,#0f1720,#0f1720f2);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    padding:calc(env(safe-area-inset-top) + 10px) 14px 0}
+  .header-inner{display:flex;align-items:center;gap:10px}
+  .logo{display:flex;gap:3px;height:24px}
+  .logo span{width:7px;border-radius:2px;display:block}
+  .logo span:nth-child(1){background:#00aeef}
+  .logo span:nth-child(2){background:#ec008c}
+  .logo span:nth-child(3){background:#ffde17}
+  .logo span:nth-child(4){background:#5b6b7d}
+  h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.2px}
+  .nav{display:flex;gap:8px;overflow-x:auto;padding:12px 0 10px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav button{flex:0 0 auto;background:var(--card);color:var(--muted);
+    border:1px solid var(--line);padding:9px 14px;border-radius:999px;
+    font-size:15px;font-weight:600;white-space:nowrap;cursor:pointer}
+  .nav button.active{background:var(--accent);color:#04141d;border-color:var(--accent)}
+  .app{max-width:680px;margin:0 auto;padding:16px 14px 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:16px}
+  .card h2{margin:0 0 4px;font-size:19px}
+  .card .intro{color:var(--muted);font-size:14px;margin:0 0 14px}
+  .field{margin-bottom:13px}
+  .field label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .control{display:flex;gap:8px}
+  .control input,.control select{
+    background:var(--bg2);border:1px solid var(--line);color:var(--text);
+    border-radius:12px;padding:13px 12px;font-size:18px;width:100%;
+    -webkit-appearance:none;appearance:none}
+  .control input:focus,.control select:focus{outline:none;border-color:var(--accent)}
+  .control input{font-variant-numeric:tabular-nums}
+  .control select{flex:0 0 38%;max-width:140px;background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%239fb0c2' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+  .results{margin-top:6px;border-top:1px dashed var(--line);padding-top:12px}
+  .res-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding:8px 0;border-bottom:1px solid #ffffff10}
+  .res-row:last-child{border-bottom:none}
+  .res-row .rl{color:var(--muted);font-size:14px}
+  .res-row .rv{font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;text-align:right}
+  .res-row .rv small{color:var(--muted);font-weight:600;font-size:13px;margin-left:4px}
+  .res-row.primary{background:var(--card2);margin:6px -8px;padding:12px 12px;border-radius:12px;border:none}
+  .res-row.primary .rv{font-size:24px;color:var(--accent)}
+  .res-row.primary .rl{color:var(--text);font-weight:600}
+  .formula{margin-top:12px;font-size:13px;color:var(--muted);background:#0d1620;
+    border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .formula b{color:var(--text)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .app-footer{max-width:680px;margin:0 auto;padding:6px 16px 28px;color:var(--muted);
+    font-size:13px;text-align:center}
+  .app-footer .install-hint{margin-top:6px;color:#7e90a3}
+  @media (max-width:380px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="header-inner">
+    <div class="logo" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <h1>Flexo Calculator</h1>
+  </div>
+  <nav id="nav" class="nav" aria-label="Calculators"></nav>
+</header>
+
+<main id="app" class="app"></main>
+
+<footer class="app-footer">
+  <p>Self-contained · Works offline · No internet needed</p>
+  <p class="install-hint">Tip: in Safari tap <strong>Share → Add to Home Screen</strong> for an app icon</p>
+</footer>
+
+<script>
+/* ---------- unit system (everything converts to a base unit) ---------- */
+const UNITS = {
+  length: { base:"mm", list:[["mm",1],["cm",10],["m",1000],["µm",0.001],["in",25.4],["mil",0.0254],["ft",304.8]] },
+  speed:  { base:"m/min", list:[["m/min",1],["ft/min",0.3048],["m/s",60]] },
+  vol:    { base:"cm³/m²", list:[["BCM",1.55],["cm³/m²",1]] } // 1 BCM/in² = 1.55 cm³/m²
+};
+
+const fmt = (n, p=3) => {
+  if (!isFinite(n)) return "–";
+  const a = Math.abs(n);
+  if (a !== 0 && (a < 0.001 || a >= 1e7)) return n.toExponential(2);
+  let s = n.toFixed(p);
+  if (s.includes(".")) s = s.replace(/\.?0+$/,"");
+  return Number(s).toLocaleString(undefined,{maximumFractionDigits:p});
+};
+const PI = Math.PI;
+
+/* ---------- calculator definitions ---------- */
+const CALCS = [
+{
+  id:"repeat", name:"Repeat", title:"Repeat & Cylinder",
+  intro:"Print repeat and cylinder size from gear teeth, or work backwards to find the gear.",
+  fields:[
+    {id:"teeth", label:"Gear teeth", kind:"num", def:96},
+    {id:"pitch", label:"Gear pitch", kind:"len", def:3.175, unit:"mm",
+      hint:"1/8\" = 3.175 mm (most common)"},
+    {id:"target", label:"Target repeat (optional → finds teeth)", kind:"len", def:"", unit:"mm", optional:true}
+  ],
+  compute(v){
+    const out=[];
+    const repeat = v.teeth * v.pitch;           // mm
+    out.push({l:"Repeat length", v:fmt(repeat,2), u:"mm", primary:true});
+    out.push({l:"Repeat length", v:fmt(repeat/25.4,3), u:"in"});
+    out.push({l:"Cylinder print circumference", v:fmt(repeat,2), u:"mm"});
+    out.push({l:"Print diameter (≈)", v:fmt(repeat/PI,2)+" mm  ·  "+fmt(repeat/PI/25.4,3)+" in"});
+    if (v.target && v.pitch>0){
+      const exact = v.target / v.pitch;
+      const teeth = Math.round(exact);
+      const got = teeth * v.pitch;
+      out.push({l:"— Reverse —", v:""});
+      out.push({l:"Nearest whole teeth", v:teeth, u:"teeth", primary:true});
+      out.push({l:"Achievable repeat", v:fmt(got,2)+" mm  ·  "+fmt(got/25.4,3)+" in"});
+      out.push({l:"Difference vs target", v:fmt(got - v.target,3), u:"mm"});
+    }
+    return out;
+  },
+  formula:"Repeat = teeth × pitch. Diameter ≈ repeat ÷ π."
+},
+{
+  id:"distort", name:"Distortion", title:"Plate Distortion (Shrinkage)",
+  intro:"How much shorter to make artwork so a flat plate prints to size once wrapped on the cylinder.",
+  fields:[
+    {id:"repeat", label:"Repeat length", kind:"len", def:500, unit:"mm"},
+    {id:"plate", label:"Plate thickness", kind:"len", def:1.14, unit:"mm", hint:"0.045\" = 1.14 mm"},
+    {id:"tape", label:"Stickyback / mount tape", kind:"len", def:0.50, unit:"mm", hint:"0.020\" = 0.50 mm"}
+  ],
+  compute(v){
+    const tir = 2*PI*(v.plate + v.tape);          // extra circumference at plate surface
+    const distPct = tir / v.repeat * 100;
+    const factor = (v.repeat - tir)/v.repeat;
+    const art = v.repeat - tir;
+    return [
+      {l:"Distortion", v:fmt(distPct,3), u:"%", primary:true},
+      {l:"Distortion factor", v:fmt(factor*100,3), u:"%"},
+      {l:"Distortion factor (×)", v:fmt(factor,5)},
+      {l:"Distorted artwork length", v:fmt(art,2)+" mm  ·  "+fmt(art/25.4,3)+" in"},
+      {l:"Shrink amount", v:fmt(tir,2), u:"mm"}
+    ];
+  },
+  formula:"Distortion % = [2π × (plate + tape)] ÷ repeat × 100. Artwork length = repeat × distortion factor. Assumes distortion measured across full plate + tape caliper."
+},
+{
+  id:"anilox", name:"Anilox", title:"Anilox & Ink Mileage",
+  intro:"Convert anilox volume and estimate ink coverage / consumption.",
+  fields:[
+    {id:"vol", label:"Anilox volume", kind:"vol", def:4, unit:"BCM"},
+    {id:"cov", label:"Image area coverage", kind:"num", def:100, suf:"%"},
+    {id:"te", label:"Transfer efficiency", kind:"num", def:100, suf:"%", hint:"typ. 30–60% in practice"},
+    {id:"dens", label:"Ink density", kind:"num", def:1.0, suf:"g/cm³"},
+    {id:"width", label:"Web width (optional)", kind:"len", def:"", unit:"mm", optional:true},
+    {id:"length", label:"Run length (optional)", kind:"len", def:"", unit:"m", optional:true}
+  ],
+  compute(v){
+    const out=[];
+    const cm3 = v.vol;                              // cm³/m²
+    out.push({l:"Volume", v:fmt(cm3/1.55,3)+" BCM  ·  "+fmt(cm3,3)+" cm³/m²"});
+    const laid = cm3 * (v.cov/100) * (v.te/100);    // cm³/m² actually deposited
+    out.push({l:"Ink laid down", v:fmt(laid,4), u:"cm³/m²", primary:true});
+    out.push({l:"Ink weight", v:fmt(laid*v.dens,4), u:"g/m²"});
+    if (laid>0){
+      out.push({l:"Coverage", v:fmt(1000/laid,1), u:"m²/L"});
+      out.push({l:"Coverage", v:fmt(1000/(laid*v.dens),1), u:"m²/kg"});
+    }
+    if (v.width && v.length){
+      const area = (v.width/1000) * v.length;       // m²
+      const litres = laid/1000 * area;              // L
+      out.push({l:"— Job total —", v:""});
+      out.push({l:"Printed area", v:fmt(area,1), u:"m²"});
+      out.push({l:"Ink required", v:fmt(litres,3)+" L  ·  "+fmt(litres*v.dens,3)+" kg", primary:true});
+    }
+    return out;
+  },
+  formula:"1 BCM/in² = 1.55 cm³/m². Ink laid = volume × coverage × transfer. Coverage(m²/L) = 1000 ÷ ink laid."
+},
+{
+  id:"dotgain", name:"Dot Gain", title:"Dot Gain (TVI)",
+  intro:"Tone Value Increase between your file and the printed result.",
+  fields:[
+    {id:"nom", label:"Nominal / file tone", kind:"num", def:50, suf:"%"},
+    {id:"meas", label:"Measured printed tone", kind:"num", def:62, suf:"%"}
+  ],
+  compute(v){
+    const gain = v.meas - v.nom;
+    return [
+      {l:"Dot gain (TVI)", v:fmt(gain,1), u:"%", primary:true},
+      {l:"Relative increase", v: v.nom? fmt(gain/v.nom*100,1):"–", u:"%"}
+    ];
+  },
+  formula:"Dot gain = measured % − nominal %."
+},
+{
+  id:"screen", name:"Screen", title:"Screen & Anilox Ratio",
+  intro:"Line-screen conversions and a recommended anilox line count.",
+  fields:[
+    {id:"plate", label:"Plate / print screen", kind:"num", def:133, suf:"lpi"},
+    {id:"ratio", label:"Anilox : plate ratio", kind:"num", def:5, hint:"rule of thumb 4–6×"},
+    {id:"conv", label:"Convert this value", kind:"num", def:133, suf:"lpi"}
+  ],
+  compute(v){
+    return [
+      {l:"Recommended anilox", v:fmt(v.plate*v.ratio,0), u:"lpi", primary:true},
+      {l:"Recommended anilox", v:fmt(v.plate*v.ratio/2.54,0), u:"l/cm"},
+      {l:"— Converter —", v:""},
+      {l:fmt(v.conv,0)+" lpi", v:fmt(v.conv/2.54,1), u:"lines/cm"},
+      {l:fmt(v.conv,0)+" l/cm", v:fmt(v.conv*2.54,1), u:"lpi"}
+    ];
+  },
+  formula:"Anilox lpi ≈ plate lpi × ratio. 1 inch = 2.54 cm."
+},
+{
+  id:"speed", name:"Production", title:"Production & Speed",
+  intro:"Impression rate and run time from press speed and repeat.",
+  fields:[
+    {id:"speed", label:"Press speed", kind:"speed", def:150, unit:"m/min"},
+    {id:"repeat", label:"Repeat length", kind:"len", def:500, unit:"mm"},
+    {id:"run", label:"Run length (optional)", kind:"len", def:"", unit:"m", optional:true},
+    {id:"imp", label:"Impressions needed (optional)", kind:"num", def:"", optional:true}
+  ],
+  compute(v){
+    const out=[];
+    const repM = v.repeat/1000;                     // m
+    const ipm = repM>0 ? v.speed/repM : NaN;        // impressions/min
+    out.push({l:"Impressions / min", v:fmt(ipm,0), primary:true});
+    out.push({l:"Impressions / hour", v:fmt(ipm*60,0)});
+    out.push({l:"Linear output", v:fmt(v.speed*60,0), u:"m/hr"});
+    out.push({l:"Speed", v:fmt(v.speed/0.3048,0), u:"ft/min"});
+    if (v.run){
+      const t = v.run / v.speed;                    // min
+      out.push({l:"— Run length "+fmt(v.run,0)+" m —", v:""});
+      out.push({l:"Run time", v:fmtTime(t)});
+      out.push({l:"Impressions", v:fmt(v.run/repM,0)});
+    }
+    if (v.imp){
+      const len = v.imp * repM;
+      out.push({l:"— "+fmt(v.imp,0)+" impressions —", v:""});
+      out.push({l:"Material length", v:fmt(len,1), u:"m"});
+      out.push({l:"Run time", v:fmtTime(len/v.speed)});
+    }
+    return out;
+  },
+  formula:"Impressions/min = speed ÷ repeat. Time = length ÷ speed."
+},
+{
+  id:"convert", name:"Convert", title:"Length Converter",
+  intro:"Quick conversions for repeats, plate calipers and tape.",
+  fields:[
+    {id:"val", label:"Value", kind:"len", def:1, unit:"in"}
+  ],
+  compute(v){
+    const mm=v.val;
+    return [
+      {l:"mm", v:fmt(mm,4)},
+      {l:"cm", v:fmt(mm/10,4)},
+      {l:"m", v:fmt(mm/1000,5)},
+      {l:"inches", v:fmt(mm/25.4,5)},
+      {l:"mil (0.001\")", v:fmt(mm/0.0254,2)},
+      {l:"micron (µm)", v:fmt(mm/0.001,1)}
+    ];
+  },
+  formula:"1 in = 25.4 mm · 1 mil = 0.0254 mm · 1 µm = 0.001 mm."
+}
+];
+
+function fmtTime(min){
+  if (!isFinite(min)) return "–";
+  if (min < 60) return fmt(min,1)+" min";
+  const h=Math.floor(min/60), m=Math.round(min-h*60);
+  return h+" h "+m+" min";
+}
+
+/* ---------- rendering ---------- */
+const navEl = document.getElementById("nav");
+const appEl = document.getElementById("app");
+let active = location.hash.replace("#","") || CALCS[0].id;
+if (!CALCS.some(c=>c.id===active)) active = CALCS[0].id;
+
+function unitSelect(f){
+  const grp = f.kind==="len"?"length":f.kind==="speed"?"speed":f.kind==="vol"?"vol":null;
+  if(!grp) return "";
+  const opts = UNITS[grp].list.map(([u])=>
+    `<option ${u===f.unit?"selected":""}>${u}</option>`).join("");
+  return `<select data-unit="${f.id}">${opts}</select>`;
+}
+function suffix(f){
+  return f.suf ? `<span style="align-self:center;color:var(--muted);font-weight:600">${f.suf}</span>` : "";
+}
+
+function render(){
+  navEl.innerHTML = CALCS.map(c=>
+    `<button data-id="${c.id}" class="${c.id===active?"active":""}">${c.name}</button>`).join("");
+  const c = CALCS.find(x=>x.id===active);
+  appEl.innerHTML = `<section class="card">
+    <h2>${c.title}</h2><p class="intro">${c.intro}</p>
+    ${c.fields.map(f=>{
+      const ph = f.optional?'placeholder="optional"':'';
+      const step = 'step="any"';
+      return `<div class="field">
+        <label for="f_${f.id}">${f.label}${f.hint?` <span style="color:#7e90a3;font-weight:500">· ${f.hint}</span>`:""}</label>
+        <div class="control">
+          <input id="f_${f.id}" type="number" inputmode="decimal" ${step} ${ph}
+            data-f="${f.id}" value="${f.def}" />
+          ${unitSelect(f)}${suffix(f)}
+        </div></div>`;
+    }).join("")}
+    <div class="results" id="results"></div>
+    <div class="formula">📐 ${c.formula}</div>
+  </section>`;
+  appEl.querySelectorAll("input,select").forEach(el=>{
+    el.addEventListener("input",()=>{compute();save();});
+  });
+  compute();
+}
+
+function readValues(c){
+  const v={};
+  c.fields.forEach(f=>{
+    const inp=document.querySelector(`[data-f="${f.id}"]`);
+    let n = inp.value==="" ? "" : parseFloat(inp.value);
+    if (n!=="" && isFinite(n)){
+      const grp = f.kind==="len"?"length":f.kind==="speed"?"speed":f.kind==="vol"?"vol":null;
+      if (grp){
+        const sel=document.querySelector(`[data-unit="${f.id}"]`);
+        const factor=(UNITS[grp].list.find(([u])=>u===sel.value)||[null,1])[1];
+        n = n*factor; // to base unit
+      }
+    } else { n = f.optional ? "" : 0; }
+    v[f.id]=n;
+  });
+  return v;
+}
+
+function compute(){
+  const c=CALCS.find(x=>x.id===active);
+  const v=readValues(c);
+  const rows=c.compute(v);
+  document.getElementById("results").innerHTML = rows.map(r=>{
+    if(r.v==="") return `<div class="res-row" style="border:none;padding-bottom:0"><span class="rl" style="font-weight:700;color:var(--accent2)">${r.l}</span></div>`;
+    return `<div class="res-row ${r.primary?"primary":""}">
+      <span class="rl">${r.l}</span>
+      <span class="rv">${r.v}${r.u?`<small>${r.u}</small>`:""}</span></div>`;
+  }).join("");
+}
+
+function save(){
+  const c=CALCS.find(x=>x.id===active); const d={};
+  c.fields.forEach(f=>{
+    const inp=document.querySelector(`[data-f="${f.id}"]`); d[f.id]=inp.value;
+    const sel=document.querySelector(`[data-unit="${f.id}"]`); if(sel)d[f.id+"_u"]=sel.value;
+  });
+  try{localStorage.setItem("flexo_"+c.id,JSON.stringify(d));}catch(e){}
+}
+function load(){
+  const c=CALCS.find(x=>x.id===active);
+  try{
+    const d=JSON.parse(localStorage.getItem("flexo_"+c.id)||"{}");
+    Object.keys(d).forEach(k=>{
+      if(k.endsWith("_u")){const s=document.querySelector(`[data-unit="${k.slice(0,-2)}"]`);if(s)s.value=d[k];}
+      else{const i=document.querySelector(`[data-f="${k}"]`);if(i)i.value=d[k];}
+    });
+  }catch(e){}
+}
+
+navEl.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  active=b.dataset.id; location.hash=active; render(); load(); compute();
+});
+
+render(); load(); compute();
+</script>
+</body>
+</html>
