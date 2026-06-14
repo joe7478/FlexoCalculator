@@ -199,6 +199,31 @@ const CALCS = [
   formula:"1 BCM/in² = 1.55 cm³/m². Mileage(ft²/gal) = 40.75 × 1000 ÷ (BCM×1.55×coverage×transfer). lb/gal = density × 8.345."
 },
 {
+  id:"msi", name:"Roll MSI", title:"Roll MSI & Cost",
+  intro:"Square inches (MSI = 1,000 in²) and cost for a roll or a group of rolls.",
+  fields:[
+    {id:"width", label:"Width", kind:"len", def:5.0, unit:"in"},
+    {id:"length", label:"Length", kind:"len", def:5000, unit:"ft"},
+    {id:"rate", label:"Price", kind:"num", def:0.50, suf:"$/MSI"},
+    {id:"rolls", label:"Number of rolls", kind:"num", def:1}
+  ],
+  compute(v){
+    const lenIn = v.length;                       // base is inches
+    const msi = (v.width * lenIn) / 1000;         // MSI per roll
+    const costRoll = msi * v.rate;
+    const rolls = v.rolls || 0;
+    return [
+      {l:"MSI per roll", v:fmt(msi,2), u:"MSI", primary:true},
+      {l:"Cost per roll", v:"$"+fmt(costRoll,2)},
+      {l:"Area per roll", v:fmt(v.width*lenIn,0)+" in²  ·  "+fmt(v.width*lenIn/144,1)+" ft²"},
+      {l:"— "+fmt(rolls,0)+" roll(s) —", v:""},
+      {l:"Total MSI", v:fmt(msi*rolls,2), u:"MSI"},
+      {l:"Total cost", v:"$"+fmt(costRoll*rolls,2), primary:true}
+    ];
+  },
+  formula:"Area = width(in) × length(in). MSI = area ÷ 1,000. Cost = MSI × $/MSI. (1 ft = 12 in)"
+},
+{
   id:"dotgain", name:"Dot Gain", title:"Dot Gain (TVI)",
   intro:"Tone Value Increase between your file and the printed result.",
   fields:[
