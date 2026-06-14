@@ -8,10 +8,8 @@ A self-contained flexographic printing calculator for the iPhone (or any phone/c
 | Tab | Solves |
 |-----|--------|
 | **Repeat** | Print repeat & cylinder size from gear teeth — and the reverse |
-| **Distortion** | Plate shrinkage / distortion factor & distorted artwork length |
 | **Anilox** | Anilox volume (BCM), ink mileage (ft²/gal, ft²/lb) and job ink (gal, lb) |
-| **Dot Gain** | Tone value increase (TVI) |
-| **Screen** | Recommended anilox line count (lpi) |
+| **Roll MSI** | Roll square inches (MSI) and cost from width, length, $/MSI, # rolls |
 | **Production** | Impressions/min & hr, run time, material length |
 | **Convert** | in / count / mil / ft length converter |
 

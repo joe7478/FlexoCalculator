@@ -144,29 +144,6 @@ const CALCS = [
   formula:"Repeat = teeth × pitch. Diameter ≈ repeat ÷ π. 1 count = 10 in."
 },
 {
-  id:"distort", name:"Distortion", title:"Plate Distortion (Shrinkage)",
-  intro:"How much shorter to make artwork so a flat plate prints to size once wrapped on the cylinder.",
-  fields:[
-    {id:"repeat", label:"Repeat length", kind:"len", def:20, unit:"in"},
-    {id:"plate", label:"Plate thickness", kind:"len", def:0.045, unit:"in", hint:"common: 0.045, 0.067, 0.107 in"},
-    {id:"tape", label:"Stickyback / mount tape", kind:"len", def:0.020, unit:"in", hint:"common: 0.015–0.020 in"}
-  ],
-  compute(v){
-    const tir = 2*PI*(v.plate + v.tape);          // extra circumference at plate surface (in)
-    const distPct = tir / v.repeat * 100;
-    const factor = (v.repeat - tir)/v.repeat;
-    const art = v.repeat - tir;
-    return [
-      {l:"Distortion", v:fmt(distPct,3), u:"%", primary:true},
-      {l:"Distortion factor", v:fmt(factor*100,3), u:"%"},
-      {l:"Distortion factor (×)", v:fmt(factor,5)},
-      {l:"Distorted artwork length", v:fmt(art,3)+" in  ·  "+fmt(art/10,4)+" count"},
-      {l:"Shrink amount", v:fmt(tir,3), u:"in"}
-    ];
-  },
-  formula:"Distortion % = [2π × (plate + tape)] ÷ repeat × 100. Artwork length = repeat × distortion factor. Assumes distortion measured across full plate + tape caliper."
-},
-{
   id:"anilox", name:"Anilox", title:"Anilox & Ink Mileage",
   intro:"Anilox volume and estimated ink coverage / consumption, in US units.",
   fields:[
@@ -222,38 +199,6 @@ const CALCS = [
     ];
   },
   formula:"Area = width(in) × length(in). MSI = area ÷ 1,000. Cost = MSI × $/MSI. (1 ft = 12 in)"
-},
-{
-  id:"dotgain", name:"Dot Gain", title:"Dot Gain (TVI)",
-  intro:"Tone Value Increase between your file and the printed result.",
-  fields:[
-    {id:"nom", label:"Nominal / file tone", kind:"num", def:50, suf:"%"},
-    {id:"meas", label:"Measured printed tone", kind:"num", def:62, suf:"%"}
-  ],
-  compute(v){
-    const gain = v.meas - v.nom;
-    return [
-      {l:"Dot gain (TVI)", v:fmt(gain,1), u:"%", primary:true},
-      {l:"Relative increase", v: v.nom? fmt(gain/v.nom*100,1):"–", u:"%"}
-    ];
-  },
-  formula:"Dot gain = measured % − nominal %."
-},
-{
-  id:"screen", name:"Screen", title:"Screen & Anilox Ratio",
-  intro:"Recommended anilox line count from your plate screen ruling.",
-  fields:[
-    {id:"plate", label:"Plate / print screen", kind:"num", def:133, suf:"lpi"},
-    {id:"ratio", label:"Anilox : plate ratio", kind:"num", def:5, hint:"rule of thumb 4–6×"}
-  ],
-  compute(v){
-    return [
-      {l:"Recommended anilox", v:fmt(v.plate*v.ratio,0), u:"lpi", primary:true},
-      {l:"Low end (4×)", v:fmt(v.plate*4,0), u:"lpi"},
-      {l:"High end (6×)", v:fmt(v.plate*6,0), u:"lpi"}
-    ];
-  },
-  formula:"Anilox lpi ≈ plate lpi × ratio (lpi = lines per inch)."
 },
 {
   id:"speed", name:"Production", title:"Production & Speed",
