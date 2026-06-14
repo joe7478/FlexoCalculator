@@ -97,9 +97,9 @@
 <script>
 /* ---------- unit system (everything converts to a base unit) ---------- */
 const UNITS = {
-  length: { base:"mm", list:[["mm",1],["cm",10],["m",1000],["µm",0.001],["in",25.4],["mil",0.0254],["ft",304.8]] },
-  speed:  { base:"m/min", list:[["m/min",1],["ft/min",0.3048],["m/s",60]] },
-  vol:    { base:"cm³/m²", list:[["BCM",1.55],["cm³/m²",1]] } // 1 BCM/in² = 1.55 cm³/m²
+  length: { base:"in", list:[["in",1],["count",10],["mil",0.001],["ft",12]] }, // 1 count = 10 in
+  speed:  { base:"ft/min", list:[["ft/min",1],["in/min",1/12]] },
+  vol:    { base:"BCM", list:[["BCM",1],["cm³/m²",1/1.55]] } // 1 BCM/in² = 1.55 cm³/m²
 };
 
 const fmt = (n, p=3) => {
@@ -119,40 +119,40 @@ const CALCS = [
   intro:"Print repeat and cylinder size from gear teeth, or work backwards to find the gear.",
   fields:[
     {id:"teeth", label:"Gear teeth", kind:"num", def:96},
-    {id:"pitch", label:"Gear pitch", kind:"len", def:3.175, unit:"mm",
-      hint:"1/8\" = 3.175 mm (most common)"},
-    {id:"target", label:"Target repeat (optional → finds teeth)", kind:"len", def:"", unit:"mm", optional:true}
+    {id:"pitch", label:"Gear pitch", kind:"len", def:0.125, unit:"in",
+      hint:"1/8\" = 0.125 in (most common)"},
+    {id:"target", label:"Target repeat (optional → finds teeth)", kind:"len", def:"", unit:"in", optional:true}
   ],
   compute(v){
     const out=[];
-    const repeat = v.teeth * v.pitch;           // mm
-    out.push({l:"Repeat length", v:fmt(repeat,2), u:"mm", primary:true});
-    out.push({l:"Repeat length", v:fmt(repeat/25.4,3), u:"in"});
-    out.push({l:"Cylinder print circumference", v:fmt(repeat,2), u:"mm"});
-    out.push({l:"Print diameter (≈)", v:fmt(repeat/PI,2)+" mm  ·  "+fmt(repeat/PI/25.4,3)+" in"});
+    const repeat = v.teeth * v.pitch;           // in
+    out.push({l:"Repeat length", v:fmt(repeat,3), u:"in", primary:true});
+    out.push({l:"Repeat length", v:fmt(repeat/10,4), u:"count"});
+    out.push({l:"Cylinder print circumference", v:fmt(repeat,3), u:"in"});
+    out.push({l:"Print diameter (≈)", v:fmt(repeat/PI,3), u:"in"});
     if (v.target && v.pitch>0){
       const exact = v.target / v.pitch;
       const teeth = Math.round(exact);
       const got = teeth * v.pitch;
       out.push({l:"— Reverse —", v:""});
       out.push({l:"Nearest whole teeth", v:teeth, u:"teeth", primary:true});
-      out.push({l:"Achievable repeat", v:fmt(got,2)+" mm  ·  "+fmt(got/25.4,3)+" in"});
-      out.push({l:"Difference vs target", v:fmt(got - v.target,3), u:"mm"});
+      out.push({l:"Achievable repeat", v:fmt(got,3)+" in  ·  "+fmt(got/10,4)+" count"});
+      out.push({l:"Difference vs target", v:fmt(got - v.target,4), u:"in"});
     }
     return out;
   },
-  formula:"Repeat = teeth × pitch. Diameter ≈ repeat ÷ π."
+  formula:"Repeat = teeth × pitch. Diameter ≈ repeat ÷ π. 1 count = 10 in."
 },
 {
   id:"distort", name:"Distortion", title:"Plate Distortion (Shrinkage)",
   intro:"How much shorter to make artwork so a flat plate prints to size once wrapped on the cylinder.",
   fields:[
-    {id:"repeat", label:"Repeat length", kind:"len", def:500, unit:"mm"},
-    {id:"plate", label:"Plate thickness", kind:"len", def:1.14, unit:"mm", hint:"0.045\" = 1.14 mm"},
-    {id:"tape", label:"Stickyback / mount tape", kind:"len", def:0.50, unit:"mm", hint:"0.020\" = 0.50 mm"}
+    {id:"repeat", label:"Repeat length", kind:"len", def:20, unit:"in"},
+    {id:"plate", label:"Plate thickness", kind:"len", def:0.045, unit:"in", hint:"common: 0.045, 0.067, 0.107 in"},
+    {id:"tape", label:"Stickyback / mount tape", kind:"len", def:0.020, unit:"in", hint:"common: 0.015–0.020 in"}
   ],
   compute(v){
-    const tir = 2*PI*(v.plate + v.tape);          // extra circumference at plate surface
+    const tir = 2*PI*(v.plate + v.tape);          // extra circumference at plate surface (in)
     const distPct = tir / v.repeat * 100;
     const factor = (v.repeat - tir)/v.repeat;
     const art = v.repeat - tir;
@@ -160,44 +160,43 @@ const CALCS = [
       {l:"Distortion", v:fmt(distPct,3), u:"%", primary:true},
       {l:"Distortion factor", v:fmt(factor*100,3), u:"%"},
       {l:"Distortion factor (×)", v:fmt(factor,5)},
-      {l:"Distorted artwork length", v:fmt(art,2)+" mm  ·  "+fmt(art/25.4,3)+" in"},
-      {l:"Shrink amount", v:fmt(tir,2), u:"mm"}
+      {l:"Distorted artwork length", v:fmt(art,3)+" in  ·  "+fmt(art/10,4)+" count"},
+      {l:"Shrink amount", v:fmt(tir,3), u:"in"}
     ];
   },
   formula:"Distortion % = [2π × (plate + tape)] ÷ repeat × 100. Artwork length = repeat × distortion factor. Assumes distortion measured across full plate + tape caliper."
 },
 {
   id:"anilox", name:"Anilox", title:"Anilox & Ink Mileage",
-  intro:"Convert anilox volume and estimate ink coverage / consumption.",
+  intro:"Anilox volume and estimated ink coverage / consumption, in US units.",
   fields:[
     {id:"vol", label:"Anilox volume", kind:"vol", def:4, unit:"BCM"},
     {id:"cov", label:"Image area coverage", kind:"num", def:100, suf:"%"},
     {id:"te", label:"Transfer efficiency", kind:"num", def:100, suf:"%", hint:"typ. 30–60% in practice"},
     {id:"dens", label:"Ink density", kind:"num", def:1.0, suf:"g/cm³"},
-    {id:"width", label:"Web width (optional)", kind:"len", def:"", unit:"mm", optional:true},
-    {id:"length", label:"Run length (optional)", kind:"len", def:"", unit:"m", optional:true}
+    {id:"width", label:"Web width (optional)", kind:"len", def:"", unit:"in", optional:true},
+    {id:"length", label:"Run length (optional)", kind:"len", def:"", unit:"ft", optional:true}
   ],
   compute(v){
     const out=[];
-    const cm3 = v.vol;                              // cm³/m²
-    out.push({l:"Volume", v:fmt(cm3/1.55,3)+" BCM  ·  "+fmt(cm3,3)+" cm³/m²"});
-    const laid = cm3 * (v.cov/100) * (v.te/100);    // cm³/m² actually deposited
-    out.push({l:"Ink laid down", v:fmt(laid,4), u:"cm³/m²", primary:true});
-    out.push({l:"Ink weight", v:fmt(laid*v.dens,4), u:"g/m²"});
+    const laid = v.vol * 1.55 * (v.cov/100) * (v.te/100);   // cm³/m² deposited
+    out.push({l:"Anilox volume", v:fmt(v.vol,3), u:"BCM"});
+    let ft2gal=0;
     if (laid>0){
-      out.push({l:"Coverage", v:fmt(1000/laid,1), u:"m²/L"});
-      out.push({l:"Coverage", v:fmt(1000/(laid*v.dens),1), u:"m²/kg"});
+      ft2gal = 40.746 * 1000 / laid;               // m²/L → ft²/gal
+      out.push({l:"Ink mileage", v:fmt(ft2gal,0), u:"ft²/gal", primary:true});
+      out.push({l:"Ink mileage", v:fmt(ft2gal/(v.dens*8.3454),0), u:"ft²/lb"});
     }
-    if (v.width && v.length){
-      const area = (v.width/1000) * v.length;       // m²
-      const litres = laid/1000 * area;              // L
+    if (v.width && v.length && ft2gal>0){
+      const areaFt2 = (v.width * v.length) / 144;   // width(in) × length(in) → ft²
+      const gal = areaFt2 / ft2gal;
       out.push({l:"— Job total —", v:""});
-      out.push({l:"Printed area", v:fmt(area,1), u:"m²"});
-      out.push({l:"Ink required", v:fmt(litres,3)+" L  ·  "+fmt(litres*v.dens,3)+" kg", primary:true});
+      out.push({l:"Printed area", v:fmt(areaFt2,0), u:"ft²"});
+      out.push({l:"Ink required", v:fmt(gal,3)+" gal  ·  "+fmt(gal*v.dens*8.3454,2)+" lb", primary:true});
     }
     return out;
   },
-  formula:"1 BCM/in² = 1.55 cm³/m². Ink laid = volume × coverage × transfer. Coverage(m²/L) = 1000 ÷ ink laid."
+  formula:"1 BCM/in² = 1.55 cm³/m². Mileage(ft²/gal) = 40.75 × 1000 ÷ (BCM×1.55×coverage×transfer). lb/gal = density × 8.345."
 },
 {
   id:"dotgain", name:"Dot Gain", title:"Dot Gain (TVI)",
@@ -217,51 +216,47 @@ const CALCS = [
 },
 {
   id:"screen", name:"Screen", title:"Screen & Anilox Ratio",
-  intro:"Line-screen conversions and a recommended anilox line count.",
+  intro:"Recommended anilox line count from your plate screen ruling.",
   fields:[
     {id:"plate", label:"Plate / print screen", kind:"num", def:133, suf:"lpi"},
-    {id:"ratio", label:"Anilox : plate ratio", kind:"num", def:5, hint:"rule of thumb 4–6×"},
-    {id:"conv", label:"Convert this value", kind:"num", def:133, suf:"lpi"}
+    {id:"ratio", label:"Anilox : plate ratio", kind:"num", def:5, hint:"rule of thumb 4–6×"}
   ],
   compute(v){
     return [
       {l:"Recommended anilox", v:fmt(v.plate*v.ratio,0), u:"lpi", primary:true},
-      {l:"Recommended anilox", v:fmt(v.plate*v.ratio/2.54,0), u:"l/cm"},
-      {l:"— Converter —", v:""},
-      {l:fmt(v.conv,0)+" lpi", v:fmt(v.conv/2.54,1), u:"lines/cm"},
-      {l:fmt(v.conv,0)+" l/cm", v:fmt(v.conv*2.54,1), u:"lpi"}
+      {l:"Low end (4×)", v:fmt(v.plate*4,0), u:"lpi"},
+      {l:"High end (6×)", v:fmt(v.plate*6,0), u:"lpi"}
     ];
   },
-  formula:"Anilox lpi ≈ plate lpi × ratio. 1 inch = 2.54 cm."
+  formula:"Anilox lpi ≈ plate lpi × ratio (lpi = lines per inch)."
 },
 {
   id:"speed", name:"Production", title:"Production & Speed",
   intro:"Impression rate and run time from press speed and repeat.",
   fields:[
-    {id:"speed", label:"Press speed", kind:"speed", def:150, unit:"m/min"},
-    {id:"repeat", label:"Repeat length", kind:"len", def:500, unit:"mm"},
-    {id:"run", label:"Run length (optional)", kind:"len", def:"", unit:"m", optional:true},
+    {id:"speed", label:"Press speed", kind:"speed", def:500, unit:"ft/min"},
+    {id:"repeat", label:"Repeat length", kind:"len", def:20, unit:"in"},
+    {id:"run", label:"Run length (optional)", kind:"len", def:"", unit:"ft", optional:true},
     {id:"imp", label:"Impressions needed (optional)", kind:"num", def:"", optional:true}
   ],
   compute(v){
     const out=[];
-    const repM = v.repeat/1000;                     // m
-    const ipm = repM>0 ? v.speed/repM : NaN;        // impressions/min
+    const repFt = v.repeat/12;                       // ft (repeat input is inches)
+    const ipm = repFt>0 ? v.speed/repFt : NaN;       // impressions/min (speed in ft/min)
     out.push({l:"Impressions / min", v:fmt(ipm,0), primary:true});
     out.push({l:"Impressions / hour", v:fmt(ipm*60,0)});
-    out.push({l:"Linear output", v:fmt(v.speed*60,0), u:"m/hr"});
-    out.push({l:"Speed", v:fmt(v.speed/0.3048,0), u:"ft/min"});
-    if (v.run){
-      const t = v.run / v.speed;                    // min
-      out.push({l:"— Run length "+fmt(v.run,0)+" m —", v:""});
-      out.push({l:"Run time", v:fmtTime(t)});
-      out.push({l:"Impressions", v:fmt(v.run/repM,0)});
+    out.push({l:"Linear output", v:fmt(v.speed*60,0), u:"ft/hr"});
+    if (v.run){                                       // run input is inches (base)
+      const runFt = v.run/12;
+      out.push({l:"— Run length "+fmt(runFt,0)+" ft —", v:""});
+      out.push({l:"Run time", v:fmtTime(runFt / v.speed)});
+      out.push({l:"Impressions", v:fmt(runFt/repFt,0)});
     }
     if (v.imp){
-      const len = v.imp * repM;
+      const lenFt = v.imp * repFt;
       out.push({l:"— "+fmt(v.imp,0)+" impressions —", v:""});
-      out.push({l:"Material length", v:fmt(len,1), u:"m"});
-      out.push({l:"Run time", v:fmtTime(len/v.speed)});
+      out.push({l:"Material length", v:fmt(lenFt,1)+" ft  ·  "+fmt(lenFt*12,0)+" in"});
+      out.push({l:"Run time", v:fmtTime(lenFt / v.speed)});
     }
     return out;
   },
@@ -274,17 +269,15 @@ const CALCS = [
     {id:"val", label:"Value", kind:"len", def:1, unit:"in"}
   ],
   compute(v){
-    const mm=v.val;
+    const inch=v.val;                                // base is inches
     return [
-      {l:"mm", v:fmt(mm,4)},
-      {l:"cm", v:fmt(mm/10,4)},
-      {l:"m", v:fmt(mm/1000,5)},
-      {l:"inches", v:fmt(mm/25.4,5)},
-      {l:"mil (0.001\")", v:fmt(mm/0.0254,2)},
-      {l:"micron (µm)", v:fmt(mm/0.001,1)}
+      {l:"inches", v:fmt(inch,4)},
+      {l:"count (10 in)", v:fmt(inch/10,5)},
+      {l:"mil (0.001\")", v:fmt(inch/0.001,2)},
+      {l:"feet", v:fmt(inch/12,5)}
     ];
   },
-  formula:"1 in = 25.4 mm · 1 mil = 0.0254 mm · 1 µm = 0.001 mm."
+  formula:"1 count = 10 in · 1 ft = 12 in · 1 mil = 0.001 in."
 }
 ];
 
@@ -374,12 +367,12 @@ function save(){
     const inp=document.querySelector(`[data-f="${f.id}"]`); d[f.id]=inp.value;
     const sel=document.querySelector(`[data-unit="${f.id}"]`); if(sel)d[f.id+"_u"]=sel.value;
   });
-  try{localStorage.setItem("flexo_"+c.id,JSON.stringify(d));}catch(e){}
+  try{localStorage.setItem("flexo_in_"+c.id,JSON.stringify(d));}catch(e){}
 }
 function load(){
   const c=CALCS.find(x=>x.id===active);
   try{
-    const d=JSON.parse(localStorage.getItem("flexo_"+c.id)||"{}");
+    const d=JSON.parse(localStorage.getItem("flexo_in_"+c.id)||"{}");
     Object.keys(d).forEach(k=>{
       if(k.endsWith("_u")){const s=document.querySelector(`[data-unit="${k.slice(0,-2)}"]`);if(s)s.value=d[k];}
       else{const i=document.querySelector(`[data-f="${k}"]`);if(i)i.value=d[k];}

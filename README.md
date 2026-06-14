@@ -9,13 +9,14 @@ A self-contained flexographic printing calculator for the iPhone (or any phone/c
 |-----|--------|
 | **Repeat** | Print repeat & cylinder size from gear teeth — and the reverse |
 | **Distortion** | Plate shrinkage / distortion factor & distorted artwork length |
-| **Anilox** | BCM ↔ cm³/m², ink mileage (m²/L, m²/kg) and job ink usage |
+| **Anilox** | Anilox volume (BCM), ink mileage (ft²/gal, ft²/lb) and job ink (gal, lb) |
 | **Dot Gain** | Tone value increase (TVI) |
-| **Screen** | lpi ↔ l/cm and recommended anilox line count |
+| **Screen** | Recommended anilox line count (lpi) |
 | **Production** | Impressions/min & hr, run time, material length |
-| **Convert** | mm / in / mil / micron / cm / m length converter |
+| **Convert** | in / count / mil / ft length converter |
 
-Every tab remembers your last inputs and shows the formula used.
+All measurements are in **inches** (a **count** = 10 in). Every tab remembers
+your last inputs and shows the formula used.
 
 ## Put it on your iPhone (no deploy)
 
